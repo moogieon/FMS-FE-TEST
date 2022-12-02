@@ -2,7 +2,7 @@ export interface IUserData {
   id?: string;
   name?: string;
 }
-const Loginvalidate = ({ id, name }: IUserData) => {
+const LoginValidation = ({ id, name }: IUserData) => {
   const errors: IUserData = {};
 
   if (!id) {
@@ -17,6 +17,6 @@ const Loginvalidate = ({ id, name }: IUserData) => {
     errors.name = "이름은 2자 이상입니다.";
   }
 
-  return errors;
+  return { errors };
 };
-export default Loginvalidate;
+export default LoginValidation;

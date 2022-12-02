@@ -2,8 +2,11 @@ import React, { useContext } from "react";
 import { ScreenWrap, Container, Input, Button } from "components";
 import { useRouter } from "next/router";
 import { GlobalContext } from "./_app";
-import useForm from "@components/CustomHooks/UseFrom";
-import Loginvalidate, { IUserData } from "./validation/Login.validation";
+import useForm from "@components/hooks/UseFrom";
+import Loginvalidate, {
+  IUserData,
+} from "@components/validation/LoginValidation";
+
 //TODO: Q1-1 로그인 상태 관리
 // 상태관리 라이브러리 (context, redux, recoil 등) 을 활용해서 로그인 상태를 관리하는 기능을 개발 해주세요
 // 라이브러리 사용은 자율입니다.

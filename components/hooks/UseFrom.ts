@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
+
 interface useFormProps {
   initialValues: Record<string, string>;
   onSubmit: (values: Record<string, string | number>) => void;
-  validate: any;
+  validate: CallableFunction;
 }
 const useForm = ({ initialValues, onSubmit, validate }: useFormProps) => {
   const [values, setValues] = useState(initialValues);
-  const [errors, setErrors] = useState({} as Record<string, string>);
+  const [errors, setErrors] = useState<Record<string, string | number>>({});
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
