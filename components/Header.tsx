@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useRouter } from "next/router";
+import { GlobalContext } from "pages/_app";
 
 const Header = () => {
   const router = useRouter();
-
+  const { userInfo } = useContext(GlobalContext);
   return (
     <header className="border-b p-2 py-4">
       <div className="flex justify-between items-center">
@@ -13,7 +14,9 @@ const Header = () => {
         {/* TODO: Q1-2 로그인 상태 관리 
             - 아래 태그에 사용자 명과 아이디가 출력 되도록 해주세요
         */}
-        <span className="text-sm">사용자 명(사용자 아이디)</span>
+        <span className="text-sm">
+          {userInfo.name}({userInfo.id})
+        </span>
       </div>
     </header>
   );
