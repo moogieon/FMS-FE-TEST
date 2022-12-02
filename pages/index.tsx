@@ -9,7 +9,7 @@ import Loginvalidate, { IUserData } from "./validation/Login.validation";
 // 라이브러리 사용은 자율입니다.
 // 로그인이 완료되면 /home 라우터로 이동해야합니다.
 const Login = () => {
-  const { setUserInfo } = useContext(GlobalContext);
+  const { setUserInfo, setIsLogin } = useContext(GlobalContext);
   const router = useRouter();
   const { values, errors, handleChange, handleSubmit } = useForm({
     initialValues: { id: "", name: "" },
@@ -21,6 +21,7 @@ const Login = () => {
           JSON.stringify({ id: values.id, name: values.name })
         );
         router.push("/home");
+        setIsLogin(true);
       } catch (error) {
         alert("로그인 오류");
       }
