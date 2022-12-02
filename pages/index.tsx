@@ -3,7 +3,7 @@ import { ScreenWrap, Container, Input, Button } from "components";
 import { useRouter } from "next/router";
 import { GlobalContext } from "./_app";
 import useForm from "@components/hooks/UseFrom";
-import Loginvalidate, {
+import LoginValidation, {
   IUserData,
 } from "@components/validation/LoginValidation";
 
@@ -29,7 +29,7 @@ const Login = () => {
         alert("로그인 오류");
       }
     },
-    validate: Loginvalidate,
+    validate: LoginValidation,
   });
 
   return (
