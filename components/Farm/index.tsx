@@ -1,5 +1,6 @@
-import React from "react";
-// import type { ProductionType, FarmsType } from "libs/type";
+import React, { useState, useEffect } from "react";
+import FarmList from "./FarmList";
+import type { ProductionType, FarmsType } from "libs/type";
 
 const Farm = () => {
   /* TODO: Q2-1 api 통신
@@ -12,7 +13,61 @@ const Farm = () => {
   - 랜더링 된 컴포넌트에서 하우스를 동작시키는 함수를 작성해 주세요 역시 예시 이미지를 확인 하세요.
   */
 
-  return <div className="px-2 flex flex-col gap-2"></div>;
+  const [farmList, setFarmList] = useState<Array<FarmsType>>();
+
+  const URL = "http://localhost:3000/api";
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await fetch(`${URL}/farm`, {
+          method: "GET",
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            setFarmList(res.farms);
+          });
+      } catch (error) {
+        alert("데이터를 불러 올 수 없습니다.");
+      }
+    };
+    fetchData();
+  }, []);
+
+  const totalProduction = (productions: ProductionType[]) => {
+    const total = productions
+      .map((prod) => prod.Production)
+      .reduce((a, b) => a + b);
+    return total;
+  };
+
+  const HouseActive = (farmId: number, houseId: number) => {
+    const newFarmList = farmList?.map((farm) =>
+      farm.id === farmId
+        ? {
+            ...farm,
+            houses: farm.houses?.map((house) =>
+              house.id === houseId
+                ? { ...house, active: !house.active }
+                : { ...house }
+            ),
+          }
+        : { ...farm }
+    );
+    setFarmList(newFarmList);
+  };
+
+  return (
+    <div className="px-2 flex flex-col gap-2">
+      {farmList?.map((data) => (
+        <FarmList
+          key={data.id}
+          HouseActive={HouseActive}
+          productionTotal={totalProduction(data.annualProduction)}
+          {...data}
+        />
+      ))}
+    </div>
+  );
 };
 
 export default Farm;
