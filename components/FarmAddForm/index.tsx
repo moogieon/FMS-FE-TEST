@@ -1,5 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input, Button } from "components";
+import useForm from "@components/hooks/UseFrom";
+import Modal from "@components/Modal/Modal";
+import FarmAddValidation, {
+  IFarmData,
+} from "@components/validation/FarmAddValidation";
 
 const FarmAddForm = () => {
   /*TODO: Q2-2 API 통신 (Farm 의 문제를 다 끝내고 진행하셔도 무방합니다.)
@@ -14,22 +19,87 @@ const FarmAddForm = () => {
     TODO: Q4-3
     - 각 모달에는 닫기 버튼을 추가하여 모달이 수동으로 닫혀야 합니다.
   */
+  const [isModal, setIsModal] = useState<boolean>(false);
+  const [farm, setFarm] = useState<Record<string, string>>();
+  const { values, errors, handleChange, handleSubmit } = useForm({
+    initialValues: { name: "", crops: "" },
+    onSubmit: async (values: IFarmData) => {
+      const { name, crops } = values;
+      try {
+        await fetch(`api/addfarm`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            crops,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setFarm(data.result);
+            if (farm) {
+              setIsModal(true);
+            }
+          });
+      } catch (error) {
+        alert("전송에 실패 했습니다.");
+      }
+    },
+    validate: FarmAddValidation,
+    errorModal: setIsModal,
+  });
+  const errorEvent = Object.keys(errors).length <= 0;
 
+  const onClose = () => {
+    setIsModal(false);
+  };
   return (
-    <div className="flex flex-col gap-4 px-2">
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-col">
-          <span>농장 명</span>
-          <Input name="name" type="text" />
+    <>
+      {isModal && (
+        <Modal>
+          <div className="w-full h-full flex flex-col gap-5">
+            <div className="flex justify-center font-extrabold text-xl">
+              {errorEvent ? "농장 추가 성공!" : "농장 추가 실패!"}
+            </div>
+            <div className="flex justify-center gap-1">
+              {errors.all && <span>{errors.all}</span>}
+              {errorEvent && <span>{farm?.name}</span>}
+              {errorEvent && (
+                <span className="font-extrabold">{farm?.crops}</span>
+              )}
+            </div>
+            <Button onClick={onClose}>닫기</Button>
+          </div>
+        </Modal>
+      )}
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-col gap-4 px-2">
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-col">
+              <span>농장명</span>
+              <Input
+                name="name"
+                type="text"
+                value={values.name}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex flex-col">
+              <span>작물명</span>
+              <Input
+                name="crops"
+                type="text"
+                value={values.crops}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <Button>저장</Button>
         </div>
-
-        <div className="flex flex-col">
-          <span>작물명</span>
-          <Input name="name" type="text" />
-        </div>
-      </div>
-      <Button>저장</Button>
-    </div>
+      </form>
+    </>
   );
 };
 
