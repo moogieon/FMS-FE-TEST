@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input, Button } from "components";
 import useForm from "@components/hooks/UseFrom";
+import Modal from "@components/Modal/Modal";
 import FarmAddValidation, {
   IFarmData,
 } from "@components/validation/FarmAddValidation";
@@ -18,9 +19,9 @@ const FarmAddForm = () => {
     TODO: Q4-3
     - 각 모달에는 닫기 버튼을 추가하여 모달이 수동으로 닫혀야 합니다.
   */
-
-
-  const { values,  handleChange, handleSubmit } = useForm({
+  const [isModal, setIsModal] = useState<boolean>(false);
+  const [farm, setFarm] = useState<Record<string, string>>();
+  const { values, errors, handleChange, handleSubmit } = useForm({
     initialValues: { name: "", crops: "" },
     onSubmit: async (values: IFarmData) => {
       const { name, crops } = values;
@@ -37,18 +38,42 @@ const FarmAddForm = () => {
         })
           .then((res) => res.json())
           .then((data) => {
-            alert(data.result);
+            setFarm(data.result);
+            if (farm) {
+              setIsModal(true);
+            }
           });
       } catch (error) {
         alert("전송에 실패 했습니다.");
       }
     },
     validate: FarmAddValidation,
-    
+    errorModal: setIsModal,
   });
+  const errorEvent = Object.keys(errors).length <= 0;
 
+  const onClose = () => {
+    setIsModal(false);
+  };
   return (
     <>
+      {isModal && (
+        <Modal>
+          <div className="w-full h-full flex flex-col gap-5">
+            <div className="flex justify-center font-extrabold text-xl">
+              {errorEvent ? "농장 추가 성공!" : "농장 추가 실패!"}
+            </div>
+            <div className="flex justify-center gap-1">
+              {errors.all && <span>{errors.all}</span>}
+              {errorEvent && <span>{farm?.name}</span>}
+              {errorEvent && (
+                <span className="font-extrabold">{farm?.crops}</span>
+              )}
+            </div>
+            <Button onClick={onClose}>닫기</Button>
+          </div>
+        </Modal>
+      )}
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 px-2">
           <div className="flex flex-col gap-2">

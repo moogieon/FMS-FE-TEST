@@ -1,10 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Dispatch, SetStateAction } from "react";
 interface useFormProps {
   initialValues: Record<string, string>;
   onSubmit: (values: Record<string, string | number>) => void;
   validate: CallableFunction;
+  errorModal?: Dispatch<SetStateAction<boolean>>;
 }
-const useForm = ({ initialValues, onSubmit, validate }: useFormProps) => {
+const useForm = ({
+  initialValues,
+  onSubmit,
+  validate,
+  errorModal,
+}: useFormProps) => {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -23,6 +29,9 @@ const useForm = ({ initialValues, onSubmit, validate }: useFormProps) => {
     if (submitting) {
       if (Object.keys(errors).length === 0) {
         onSubmit(values);
+      }
+      if (errorModal) {
+        errorModal(true);
       }
       setSubmitting(false);
     }
