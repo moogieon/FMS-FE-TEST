@@ -15,11 +15,11 @@ const Farm = () => {
 
   const [farmList, setFarmList] = useState<Array<FarmsType>>();
 
-  const URL = "http://localhost:3000/api";
+  // const URL = "http://localhost:3000/api";
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await fetch(`${URL}/farm`, {
+        await fetch(`api/farm`, {
           method: "GET",
         })
           .then((res) => res.json())
